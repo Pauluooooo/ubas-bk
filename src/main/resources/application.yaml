@@ -1,0 +1,10 @@
+spring:
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://13.250.127.122:3306/ubas?useSSL=false&serverTimezone=UTC
+    username: root
+    password: 123456
+  jackson:
+    default-property-inclusion: non_null
+mybatis-plus:
+  type-aliases-package: com.datasystem.entity
