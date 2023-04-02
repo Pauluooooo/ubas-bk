@@ -26,8 +26,8 @@ public class UserController {
     return userService.register(loginForm,session);
   }
 
-//  @PostMapping("/login")
-//  public Result login(@RequestBody LoginFormDTO loginForm, HttpSession session) {
-//    return null;
-//  }
+  @PostMapping("/login")
+  public Result login(@RequestBody LoginFormDTO loginForm, HttpSession session) {
+    return userService.login(loginForm,session);
+  }
 }

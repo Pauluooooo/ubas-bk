@@ -1,9 +1,11 @@
+server:
+  port: 8081
 spring:
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://13.250.127.122:3306/ubas?useSSL=false&serverTimezone=UTC
+    url: jdbc:mysql://35.241.112.187:3306/ubas?useSSL=false&serverTimezone=UTC
     username: root
-    password: 123456
+    password: qweasd
   jackson:
     default-property-inclusion: non_null
 mybatis-plus:

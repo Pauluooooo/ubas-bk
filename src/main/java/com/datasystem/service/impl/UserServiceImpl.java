@@ -25,12 +25,11 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
     String username = loginForm.getUsername();
     String password = loginForm.getPassword();
 
-    User user = query().eq("user_name", username).one();
+    User user = getUserByUsername(username);
 
     if (user == null) {
       try {
         user = createUserWithUsernameAndPassword(username, password);
-
       } catch (Exception e) {
         return Result.fail("Failed to create user");
       }
@@ -41,7 +40,17 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
 
   @Override
   public Result login(LoginFormDTO loginForm, HttpSession session) {
-    return null;
+    String username = loginForm.getUsername();
+    String rawPassword = loginForm.getPassword();
+
+    User user = getUserByUsername(username);
+
+    if (user != null && PasswordEncoder.matcher(rawPassword,user.getPassword())) {
+      session.setAttribute("user",user);
+      return Result.ok(user);
+    }
+
+    return Result.fail("用户名或密码错误！");
   }
 
   private User createUserWithUsernameAndPassword(String userName, String passWord){
@@ -59,6 +68,10 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
     save(user);
 
     return user;
+  }
+
+  private User getUserByUsername(String username) {
+    return query().eq("user_name", username).one();
   }
 
 }

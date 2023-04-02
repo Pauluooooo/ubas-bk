@@ -30,6 +30,17 @@ public class PasswordEncoder {
   }
 
   /**
+   * 验证密码是否正确
+   *
+   * @param rawPassword     原始密码
+   * @param encodedPassword 编码后的密码
+   * @return 如果密码正确则返回true，否则返回false
+   */
+  public static boolean matcher(String rawPassword, String encodedPassword) {
+    return encode(rawPassword).equals(encodedPassword);
+  }
+
+  /**
    * 将byte数组转换为十六进制字符串
    * @param bytes byte数组
    * @return 十六进制字符串
