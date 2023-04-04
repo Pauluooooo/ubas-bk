@@ -3,14 +3,14 @@ server:
 spring:
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://35.241.112.187:3306/ubas?useSSL=false&serverTimezone=UTC
+    url: jdbc:mysql://xxxxxxxxx:3306/ubas?useSSL=false&serverTimezone=UTC
     username: root
     password: qweasd
   jackson:
     default-property-inclusion: non_null
   data:
     redis:
-      host: 35.241.112.187
+      host: xxxxxxx
       port: 6379
       database: 1
       connect-timeout: 500
