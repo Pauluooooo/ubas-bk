@@ -8,5 +8,13 @@ spring:
     password: qweasd
   jackson:
     default-property-inclusion: non_null
+  data:
+    redis:
+      host: 35.241.112.187
+      port: 6379
+      database: 1
+      connect-timeout: 500
+      password:
+
 mybatis-plus:
   type-aliases-package: com.datasystem.entity

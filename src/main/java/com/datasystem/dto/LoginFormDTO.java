@@ -11,4 +11,10 @@ public class LoginFormDTO {
 
   private String username;
   private String password;
+
+  private String phone;
+
+  private String phoneCode;
+  private String confirmPassword;
+
 }

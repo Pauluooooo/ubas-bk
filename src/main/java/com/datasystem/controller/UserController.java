@@ -30,4 +30,14 @@ public class UserController {
   public Result login(@RequestBody LoginFormDTO loginForm, HttpSession session) {
     return userService.login(loginForm,session);
   }
+
+  @PostMapping("/send/phone")
+  public Result sendPhoneCode(@RequestBody LoginFormDTO loginForm) throws Exception {
+    return userService.sendPhoneCode(loginForm);
+  }
+
+  @PostMapping("/phone/login")
+  public Result phoneLogin(@RequestBody LoginFormDTO loginForm)  {
+    return userService.phoneLogin(loginForm);
+  }
 }

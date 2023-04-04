@@ -12,8 +12,12 @@ import jakarta.servlet.http.HttpSession;
  */
 
 public interface IUserService extends IService<User> {
+
   Result register(LoginFormDTO loginForm, HttpSession session);
 
   Result login(LoginFormDTO loginForm, HttpSession session);
 
+  Result sendPhoneCode(LoginFormDTO loginFormDTO) throws Exception;
+
+  Result phoneLogin(LoginFormDTO loginForm);
 }
