@@ -34,5 +34,6 @@ public class User implements Serializable {
   private String phone;
   @TableField(value = "user_password")
   private String password;
-
+  @TableField(value = "role")
+  private String role;
 }

@@ -20,4 +20,9 @@ public interface IUserService extends IService<User> {
   Result sendPhoneCode(LoginFormDTO loginFormDTO) throws Exception;
 
   Result phoneLogin(LoginFormDTO loginForm);
+
+  Result addUser(LoginFormDTO loginForm);
+
+  Result updatePassword(LoginFormDTO loginForm);
+
 }

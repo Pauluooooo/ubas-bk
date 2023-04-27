@@ -40,4 +40,14 @@ public class UserController {
   public Result phoneLogin(@RequestBody LoginFormDTO loginForm)  {
     return userService.phoneLogin(loginForm);
   }
+
+  @PostMapping("/add/user")
+  public Result addUser(@RequestBody LoginFormDTO loginForm){
+    return userService.addUser(loginForm);
+  }
+
+  @PostMapping("/change/password")
+  public Result changePassword(@RequestBody LoginFormDTO loginForm){
+    return userService.updatePassword(loginForm);
+  }
 }

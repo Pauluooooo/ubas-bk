@@ -20,8 +20,6 @@ import java.util.Random;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
-import static net.sf.jsqlparser.util.validation.metadata.NamedObject.user;
-
 /**
  * @author Pauluooooo
  * Date:2023/3/15 17:35
@@ -33,6 +31,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
 
   /**
    * 用户注册
+   *
    * @param loginForm 注册表单
    * @param session   Session
    * @return 返回结果 用户为空则注册
@@ -54,7 +53,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
       // 用户不存在，注册
       try {
         user = createUserWithUsernameAndPassword(username, password);
-        return Result.ok(user);
+        return Result.ok();
       } catch (Exception e) {
         return Result.fail("Failed to create user");
       }
@@ -66,6 +65,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
 
   /**
    * 用户名密码登录
+   *
    * @param loginForm 登录表单
    * @param session   Session
    * @return 返回结果：验证成功返回用户
@@ -87,7 +87,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
       // 密码匹配，登录
       session.setAttribute("user", user);
       return Result.ok(user);
-    }else {
+    } else {
       // 密码不匹配
       return Result.fail("The Password not match");
     }
@@ -95,6 +95,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
 
   /**
    * 发送手机验证码
+   *
    * @param loginFormDTO 手机表单
    * @return 返回结果 手机号非法返回错误
    * 合法正常返回
@@ -121,7 +122,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
     // 查看是否发送成功
     if (errorMsg == null) {
       return Result.ok();
-    }else{
+    } else {
       // 不成功，返回错误信息
       return Result.fail(errorMsg);
     }
@@ -143,19 +144,74 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
     if (cacheCode == null || !cacheCode.equals(phoneCode)) {
       return Result.fail("Phone Code Error");
     }
-    User user = query().eq("user_phone", phone).one();
     // 随机生成 Token，作为登录令牌
     String token = cn.hutool.core.lang.UUID.randomUUID().toString(true);
-    if (user == null) {
-      // 创建用户
-      creatUserWithPhone(phone);
-      return Result.ok(token);
-    }else {
-      // 用户存在，直接返回 token
-      return Result.ok(token);
+    // 查询用户是否存在
+    User user = query().eq("user_phone", phone).one();
+    if (user != null) {
+      // 用户存在，登录
+      return Result.ok();
     }
+    // 用户不存在，注册并登录
+    User userWithPhone = creatUserWithPhone(phone);
+    return Result.ok();
   }
 
+
+  /**
+   * 添加新用户功能
+   *
+   * @param loginForm 新用户信息
+   * @return 返回处理状态
+   */
+  @Override
+  public Result addUser(LoginFormDTO loginForm) {
+    String username = loginForm.getUsername();
+    String password = loginForm.getPassword();
+    String phone = loginForm.getPhone();
+    String role = loginForm.getRole();
+    // 判断用户是否已经存在
+    User cacheUser = getUserByUsername(username);
+    if (cacheUser != null) {
+      return Result.fail("用户已存在！");
+    }
+    // 添加用户，设置用户权限
+    User user = creatUser(username, password, phone, role);
+    System.out.println(user);
+
+    return Result.ok();
+  }
+
+  /**
+   * 修改密码功能
+   *
+   * @param loginForm 旧密码与新密码
+   * @return 返回处理状态
+   */
+  @Override
+  public Result updatePassword(LoginFormDTO loginForm) {
+    String username = loginForm.getUsername();
+    String oldPassword = loginForm.getPassword();
+    String newPassword = loginForm.getNewPassword();
+    String confirmPassword = loginForm.getConfirmPassword();
+
+    User user = getUserByUsername(username);
+    if (user == null) {
+      return Result.fail("用户不存在");
+    }
+
+    if (!PasswordEncoder.matcher(oldPassword, user.getPassword())) {
+      return Result.fail("原密码错误");
+    }
+
+    if (!newPassword.equals(confirmPassword)) {
+      return Result.fail("新密码不一致");
+    }
+
+    user.setPassword(PasswordEncoder.encode(newPassword));
+    updateById(user);
+    return Result.ok();
+  }
 
   private User createUserWithUsernameAndPassword(String userName, String passWord) {
     // 数据校验
@@ -170,11 +226,13 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
     user.setUsername(userName);
     // 密码加密
     user.setPassword(PasswordEncoder.encode(passWord));
+    user.setRole("1");
     save(user);
     return user;
   }
 
-  private User creatUserWithPhone(String phone){
+
+  private User creatUserWithPhone(String phone) {
     // 创建用户
     User user = new User();
     // 使用UUID作为主键
@@ -182,10 +240,25 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
     user.setUserId(String.valueOf(uuid));
     user.setUsername(phone);
     user.setPhone(phone);
+    user.setRole("1");
     save(user);
     return user;
   }
 
+  private User creatUser(String userName, String passWord, String phone, String role) {
+    // 创建用户
+    User user = new User();
+    // 使用UUID作为主键
+    UUID uuid = UUID.randomUUID();
+    user.setUserId(String.valueOf(uuid));
+    user.setUsername(userName);
+    // 密码加密
+    user.setPassword(PasswordEncoder.encode(passWord));
+    user.setPhone(phone);
+    user.setRole(role);
+    save(user);
+    return user;
+  }
 
   private User getUserByUsername(String username) {
     return query().eq("user_name", username).one();
