@@ -16,7 +16,7 @@ spring:
       connect-timeout: 500
       password:
     mongodb:
-      uri: mongodb://paul:271891169@35.241.112.187:27017/userdata
+      uri: mongodb://XXX:XXX/userdata
 
 mybatis-plus:
   type-aliases-package: com.datasystem.entity
